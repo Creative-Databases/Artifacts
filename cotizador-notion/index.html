@@ -69,6 +69,14 @@
   .lede{margin:16px 0 0;max-width:66ch;color:var(--ink-soft);font-size:17px;}
   .lede b{color:var(--ink);font-weight:600;}
 
+  /* ---- botón CTA (al form de Notion) ---- */
+  .cta-btn{display:inline-flex;align-items:center;gap:10px;background:var(--blue);color:#fff;
+    font-weight:600;font-size:15px;padding:13px 24px;border-radius:12px;text-decoration:none;
+    box-shadow:0 6px 18px rgba(32,80,184,.28);transition:background .12s;}
+  .cta-btn:hover{background:var(--blue-bright);}
+  .cta-btn svg{width:18px;height:18px;stroke:#fff;flex:none;}
+  .hero-cta{margin-top:24px;}
+
   /* ---- section scaffold ---- */
   section{margin-top:52px;}
   .sec-label{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
@@ -204,16 +212,13 @@
   .total .alt{font-size:13px;color:var(--muted);margin-top:4px;font-variant-numeric:tabular-nums;}
   .total .yr{font-size:12px;color:var(--muted);margin-top:8px;}
 
-  /* ---- cierre / empuje al formulario ---- */
+  /* ---- cierre / CTA al formulario ---- */
   .closebox{background:linear-gradient(160deg,var(--surface),var(--surface-2));
     border:1px solid var(--line);border-radius:var(--radius);padding:30px 28px;box-shadow:var(--shadow);
-    display:flex;flex-direction:column;gap:12px;align-items:flex-start;}
+    display:flex;flex-direction:column;gap:16px;align-items:flex-start;}
   .closebox h3{margin:0;font-size:20px;font-weight:700;letter-spacing:-.01em;}
   .closebox p{margin:0;color:var(--ink-soft);font-size:15px;max-width:66ch;}
   .closebox p b{color:var(--ink);}
-  .downcue{display:inline-flex;align-items:center;gap:10px;font-weight:600;font-size:14.5px;color:var(--blue);
-    background:var(--blue-wash);border:1px solid var(--line);border-radius:999px;padding:10px 18px;}
-  .downcue svg{width:18px;height:18px;stroke:var(--blue);}
 </style>
 </head>
 <body>
@@ -228,6 +233,10 @@
       <div class="eyebrow">Documentación del sistema en Notion</div>
       <h1>Miembros completos vs. invitados: elige cuántos asientos incluir</h1>
       <p class="lede">La documentación de tu sistema —módulos operativos, dashboards de Business Intelligence y flujos de negocio— está <b>incluida sin costo</b> dentro de tu plan de desarrollo continuo. Como parte del servicio incluimos también, sin costo, <b>1 miembro completo con Notion AI</b> y <b>5 accesos de invitado</b>. Aquí ves la diferencia entre un miembro y un invitado, y decides cuántos asientos adicionales sumar.</p>
+      <a class="cta-btn hero-cta" href="https://brindle-newsprint-970.notion.site/3a61179c15f88067a739e1c6edc155f9" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        Solicitar mi propuesta
+      </a>
     </div>
   </header>
 
@@ -384,11 +393,11 @@
     <div class="sec-label"><h2>Solicita tu propuesta</h2><div class="rule"></div></div>
     <div class="closebox">
       <h3>¿Listo para avanzar?</h3>
-      <p>El cotizador de arriba es solo para darte una idea del costo. Para solicitar tu propuesta, <b>completa el formulario debajo</b> con tus datos y el número de asientos adicionales que quieres. Nuestro equipo de ventas te contactará para formalizar la orden.</p>
-      <span class="downcue">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
-        Completa el formulario a continuación
-      </span>
+      <p>El cotizador de arriba es solo para darte una idea del costo. Para solicitar tu propuesta, <b>llena el formulario</b> con tus datos y el número de asientos adicionales que quieres. Nuestro equipo de ventas te contactará para formalizar la orden.</p>
+      <a class="cta-btn" href="https://brindle-newsprint-970.notion.site/3a61179c15f88067a739e1c6edc155f9" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        Solicitar mi propuesta
+      </a>
     </div>
   </section>
 
