@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Fluxio · Avance del proyecto</title>
+<style>
+  :root {
+    color-scheme: light;
+    --page:           #f9f9f7;
+    --surface-1:      #fcfcfb;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #898781;
+    --grid:           #e1e0d9;
+    --baseline:       #c3c2b7;
+    --border:         rgba(11,11,11,0.10);
+    --done:           #2a78d6;   /* azul 450 — impacto completado */
+    --pending:        #86b6ef;   /* azul 250 — impacto pendiente  */
+    --chip-bg:        #fcfcfb;
+    --chip-active:    #0b0b0b;
+    --chip-active-ink:#fcfcfb;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      color-scheme: dark;
+      --page:           #0d0d0d;
+      --surface-1:      #1a1a19;
+      --text-primary:   #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted:     #898781;
+      --grid:           #2c2c2a;
+      --baseline:       #383835;
+      --border:         rgba(255,255,255,0.10);
+      --done:           #3987e5;  /* azul 400 */
+      --pending:        #184f95;  /* azul 600 */
+      --chip-bg:        #1a1a19;
+      --chip-active:    #ffffff;
+      --chip-active-ink:#0d0d0d;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --page:           #0d0d0d;
+    --surface-1:      #1a1a19;
+    --text-primary:   #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted:     #898781;
+    --grid:           #2c2c2a;
+    --baseline:       #383835;
+    --border:         rgba(255,255,255,0.10);
+    --done:           #3987e5;
+    --pending:        #184f95;
+    --chip-bg:        #1a1a19;
+    --chip-active:    #ffffff;
+    --chip-active-ink:#0d0d0d;
+  }
+
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    background: var(--page);
+    color: var(--text-primary);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    padding: 24px 16px 48px;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; }
+
+  header { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  h1 { font-size: 20px; font-weight: 650; letter-spacing: -0.01em; }
+  .updated { font-size: 12.5px; color: var(--text-muted); }
+  .badge-demo {
+    display: none; font-size: 11.5px; font-weight: 600; color: var(--text-secondary);
+    border: 1px solid var(--border); border-radius: 999px; padding: 2px 10px; margin-left: 8px; vertical-align: 2px;
+  }
+  .demo .badge-demo { display: inline-block; }
+
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; margin: 20px 0 0; }
+  .chip {
+    font: inherit; font-size: 13px; cursor: pointer;
+    background: var(--chip-bg); color: var(--text-secondary);
+    border: 1px solid var(--border); border-radius: 999px; padding: 6px 14px;
+  }
+  .chip:hover { color: var(--text-primary); }
+  .chip[aria-pressed="true"] {
+    background: var(--chip-active); color: var(--chip-active-ink);
+    border-color: var(--chip-active); font-weight: 600;
+  }
+
+  .hero {
+    display: flex; gap: 32px; flex-wrap: wrap; align-items: flex-end;
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px 24px; margin-top: 16px;
+  }
+  .hero .big { font-size: 44px; font-weight: 700; line-height: 1; letter-spacing: -0.02em; }
+  .hero .label { font-size: 12.5px; color: var(--text-muted); margin-top: 6px; }
+  .hero .sub { font-size: 14px; color: var(--text-secondary); }
+  .hero .sub strong { color: var(--text-primary); font-weight: 650; }
+
+  .panel {
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px 24px; margin-top: 16px;
+  }
+  .panel-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+  .panel h2 { font-size: 14px; font-weight: 650; color: var(--text-secondary); }
+  .legend { display: flex; gap: 16px; font-size: 12.5px; color: var(--text-secondary); align-items: center; }
+  .legend .sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+  .toggle-table {
+    font: inherit; font-size: 12.5px; color: var(--text-secondary); background: none;
+    border: 1px solid var(--border); border-radius: 8px; padding: 4px 10px; cursor: pointer;
+  }
+  .toggle-table:hover { color: var(--text-primary); }
+
+  .rows { margin-top: 18px; display: grid; gap: 14px; }
+  .row { display: grid; grid-template-columns: minmax(140px, 220px) 1fr; gap: 12px; align-items: center; }
+  .row .name { font-size: 13.5px; color: var(--text-primary); overflow-wrap: anywhere; }
+  .row .name .cnt { color: var(--text-muted); font-size: 12px; }
+  .track { position: relative; height: 22px; }
+  .track .rail {
+    position: absolute; inset: 8px 0; border-radius: 4px;
+    background: transparent; border-bottom: 1px solid var(--grid);
+  }
+  .seg {
+    position: absolute; top: 0; height: 22px; min-width: 3px;
+    border: 2px solid var(--surface-1); border-radius: 5px;
+  }
+  .seg.done    { background: var(--done); }
+  .seg.pending { background: var(--pending); }
+  .val {
+    position: absolute; top: 1px; font-size: 12px; color: var(--text-secondary); white-space: nowrap;
+  }
+  .val strong { color: var(--text-primary); font-weight: 650; }
+  .row.empty .track::after {
+    content: "Sin estimación"; position: absolute; top: 2px; left: 0;
+    font-size: 12px; color: var(--text-muted); font-style: italic;
+  }
+
+  .tooltip {
+    position: fixed; z-index: 10; pointer-events: none; display: none;
+    background: var(--surface-1); color: var(--text-primary);
+    border: 1px solid var(--border); border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    padding: 8px 12px; font-size: 12.5px; max-width: 280px;
+  }
+  .tooltip .tt-title { font-weight: 650; margin-bottom: 2px; }
+  .tooltip .tt-sub { color: var(--text-secondary); }
+
+  table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 13px; display: none; }
+  .show-table table { display: table; }
+  .show-table .rows { display: none; }
+  th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--grid); }
+  th { color: var(--text-muted); font-weight: 600; font-size: 12px; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+  .empty-state { color: var(--text-muted); font-size: 13.5px; padding: 24px 0 8px; text-align: center; }
+  footer { margin-top: 20px; font-size: 12px; color: var(--text-muted); text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <header>
+    <h1>Fluxio · Avance del proyecto<span class="badge-demo">Vista previa</span></h1>
+    <span class="updated" id="updated"></span>
+  </header>
+
+  <div class="filters" id="filters" role="group" aria-label="Filtrar por portal"></div>
+
+  <div class="hero">
+    <div>
+      <div class="big" id="heroPct">–</div>
+      <div class="label">del impacto completado</div>
+    </div>
+    <div class="sub" id="heroDetail"></div>
+  </div>
+
+  <section class="panel" id="chartPanel">
+    <div class="panel-head">
+      <h2>Impacto por componente</h2>
+      <div class="legend">
+        <span><span class="sw" style="background:var(--done)"></span>Completado</span>
+        <span><span class="sw" style="background:var(--pending)"></span>Pendiente</span>
+        <button class="toggle-table" id="toggleTable" type="button">Ver tabla</button>
+      </div>
+    </div>
+    <div class="rows" id="rows"></div>
+    <table aria-label="Detalle por componente">
+      <thead>
+        <tr><th>Componente</th><th>Portal</th><th class="num">Completado</th><th class="num">Pendiente</th><th class="num">Total</th><th class="num">Avance</th></tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="empty-state" id="emptyState" hidden>No hay componentes con este filtro todavía.</div>
+  </section>
+
+  <footer>Datos en vivo desde el plan de trabajo · se actualiza cada minuto</footer>
+</div>
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  // Datos de respaldo (última lectura real) — solo si /api/progress no responde.
+  const DEMO = {
+    updatedAt: "2026-08-25T00:00:00.000Z",
+    portals: ["Back Office"],
+    components: [
+      { id: "86e2e8qt0", name: "Navegación Principal", url: "#", status: "Open", completed: false,
+        portal: "Back Office", parentComponentId: null, depth: 0,
+        doneImpact: 3, activeImpact: 2, totalImpact: 5, pct: 60,
+        doneTasks: 1, activeTasks: 2, noImpactTasks: 0,
+        tasks: [
+          { name: "Menu Options", impact: 3, completed: true,  status: "done" },
+          { name: "Logo",         impact: 1, completed: false, status: "Open" },
+          { name: "Rol Activo",   impact: 1, completed: false, status: "Open" }
+        ] },
+      { id: "86e2z960p", name: "Configuración de Servicio", url: "#", status: "Open", completed: false,
+        portal: "Back Office", parentComponentId: null, depth: 0,
+        doneImpact: 0, activeImpact: 0, totalImpact: 0, pct: null,
+        doneTasks: 3, activeTasks: 0, noImpactTasks: 3, tasks: [] },
+      { id: "86e2h6dxp", name: "Formulario \"Nuevo plan de servicio\" / \"Editar plan\"", url: "#",
+        status: "Closed", completed: true, portal: "Back Office", parentComponentId: null, depth: 0,
+        doneImpact: 0, activeImpact: 0, totalImpact: 0, pct: null,
+        doneTasks: 3, activeTasks: 3, noImpactTasks: 6, tasks: [] },
+      { id: "86e2z9ph6", name: "Detalles del plan", url: "#", status: "done", completed: true,
+        portal: "Back Office", parentComponentId: "86e2h6dxp", depth: 1,
+        doneImpact: 0, activeImpact: 0, totalImpact: 0, pct: null,
+        doneTasks: 1, activeTasks: 0, noImpactTasks: 1, tasks: [] },
+      { id: "86e2z9pn8", name: "Documentos del plan", url: "#", status: "Open", completed: false,
+        portal: "Back Office", parentComponentId: "86e2h6dxp", depth: 1,
+        doneImpact: 0, activeImpact: 0, totalImpact: 0, pct: null,
+        doneTasks: 0, activeTasks: 4, noImpactTasks: 4, tasks: [] },
+      { id: "86e2h6d7h", name: "Pagina - Servicios", url: "#", status: "done", completed: true,
+        portal: "Back Office", parentComponentId: null, depth: 0,
+        doneImpact: 0, activeImpact: 0, totalImpact: 0, pct: null,
+        doneTasks: 4, activeTasks: 0, noImpactTasks: 4, tasks: [] },
+      { id: "86e2h6e0k", name: "Tabla comparativa de planes", url: "#", status: "Closed", completed: true,
+        portal: "Back Office", parentComponentId: null, depth: 0,
+        doneImpact: 0, activeImpact: 0, totalImpact: 0, pct: null,
+        doneTasks: 1, activeTasks: 0, noImpactTasks: 1, tasks: [] }
+    ]
+  };
+
+  let data = null;
+  let selectedPortal = "__all__";
+
+  const $ = (id) => document.getElementById(id);
+  const fmt = (n) => (Math.round(n * 10) / 10).toLocaleString("es-MX");
+
+  function filtered() {
+    if (!data) return [];
+    return data.components.filter(c => selectedPortal === "__all__" || c.portal === selectedPortal);
+  }
+
+  function renderFilters() {
+    const box = $("filters");
+    box.innerHTML = "";
+    const mk = (label, value) => {
+      const b = document.createElement("button");
+      b.className = "chip"; b.type = "button"; b.textContent = label;
+      b.setAttribute("aria-pressed", String(selectedPortal === value));
+      b.addEventListener("click", () => { selectedPortal = value; render(); });
+      box.appendChild(b);
+    };
+    mk("Todos los portales", "__all__");
+    data.portals.forEach(p => mk(p, p));
+  }
+
+  function renderHero(items) {
+    const done = items.reduce((s, c) => s + c.doneImpact, 0);
+    const total = items.reduce((s, c) => s + c.totalImpact, 0);
+    const pct = total > 0 ? Math.round(done / total * 100) : null;
+    $("heroPct").textContent = pct == null ? "–" : pct + "%";
+    const compDone = items.filter(c => c.totalImpact > 0 && c.doneImpact >= c.totalImpact).length;
+    $("heroDetail").innerHTML = total > 0
+      ? "<strong>" + fmt(done) + "</strong> de <strong>" + fmt(total) + "</strong> puntos de impacto &middot; " +
+        items.length + " componente" + (items.length === 1 ? "" : "s") +
+        (compDone ? " &middot; " + compDone + " terminado" + (compDone === 1 ? "" : "s") : "")
+      : "Aún no hay tareas con impacto estimado en esta vista.";
+  }
+
+  function segTooltip(c, kind) {
+    const list = c.tasks.filter(t => t.impact != null && t.completed === (kind === "done"));
+    const pts = kind === "done" ? c.doneImpact : c.activeImpact;
+    const names = list.slice(0, 6).map(t => t.name).join(", ") + (list.length > 6 ? "…" : "");
+    return { title: c.name, sub: (kind === "done" ? "Completado: " : "Pendiente: ") + fmt(pts) +
+      " pts · " + list.length + " tarea" + (list.length === 1 ? "" : "s") + (names ? " — " + names : "") };
+  }
+
+  function renderRows(items) {
+    const rows = $("rows");
+    rows.innerHTML = "";
+    const max = Math.max(1, ...items.map(c => c.totalImpact));
+    const tooltip = $("tooltip");
+
+    items.forEach(c => {
+      const row = document.createElement("div");
+      row.className = "row" + (c.totalImpact === 0 ? " empty" : "");
+
+      const name = document.createElement("div");
+      name.className = "name";
+      const depth = c.depth || 0;
+      if (depth > 0) name.style.paddingLeft = (depth * 18) + "px";
+      name.innerHTML = (depth > 0 ? '<span class="cnt">&#8627;</span> ' : "") + escapeHtml(c.name) +
+        (c.noImpactTasks ? ' <span class="cnt">(+' + c.noImpactTasks + " sin estimar)</span>" : "");
+      row.appendChild(name);
+
+      const track = document.createElement("div");
+      track.className = "track";
+      track.innerHTML = '<div class="rail"></div>';
+
+      if (c.totalImpact > 0) {
+        const wDone = c.doneImpact / max * 100;
+        const wPend = c.activeImpact / max * 100;
+        let x = 0;
+        [["done", wDone], ["pending", wPend]].forEach(([kind, w]) => {
+          if (w <= 0) return;
+          const seg = document.createElement("div");
+          seg.className = "seg " + kind;
+          seg.style.left = x + "%";
+          seg.style.width = w + "%";
+          seg.addEventListener("mousemove", (e) => {
+            const tt = segTooltip(c, kind);
+            tooltip.innerHTML = '<div class="tt-title">' + escapeHtml(tt.title) + '</div><div class="tt-sub">' + escapeHtml(tt.sub) + "</div>";
+            tooltip.style.display = "block";
+            const pad = 14;
+            let tx = e.clientX + pad, ty = e.clientY + pad;
+            const r = tooltip.getBoundingClientRect();
+            if (tx + r.width > innerWidth - 8) tx = e.clientX - r.width - pad;
+            if (ty + r.height > innerHeight - 8) ty = e.clientY - r.height - pad;
+            tooltip.style.left = tx + "px"; tooltip.style.top = ty + "px";
+          });
+          seg.addEventListener("mouseleave", () => { tooltip.style.display = "none"; });
+          track.appendChild(seg);
+          x += w;
+        });
+        const val = document.createElement("span");
+        val.className = "val";
+        val.style.left = "calc(" + Math.min(x, 100) + "% + 8px)";
+        val.innerHTML = "<strong>" + fmt(c.doneImpact) + "</strong>/" + fmt(c.totalImpact) +
+          (c.pct != null ? " · " + c.pct + "%" : "");
+        track.appendChild(val);
+      }
+      row.appendChild(track);
+      rows.appendChild(row);
+    });
+
+    $("emptyState").hidden = items.length > 0;
+  }
+
+  function renderTable(items) {
+    $("tbody").innerHTML = items.map(c =>
+      "<tr><td>" + ((c.depth || 0) > 0 ? "&#8627; " : "") + escapeHtml(c.name) + "</td><td>" + escapeHtml(c.portal) + "</td>" +
+      '<td class="num">' + fmt(c.doneImpact) + '</td><td class="num">' + fmt(c.activeImpact) +
+      '</td><td class="num">' + fmt(c.totalImpact) + '</td><td class="num">' +
+      (c.pct == null ? "–" : c.pct + "%") + "</td></tr>"
+    ).join("");
+  }
+
+  function renderUpdated() {
+    const d = new Date(data.updatedAt);
+    $("updated").textContent = "Actualizado " + d.toLocaleString("es-MX", {
+      day: "numeric", month: "short", hour: "2-digit", minute: "2-digit"
+    });
+  }
+
+  function render() {
+    const items = filtered();
+    renderFilters();
+    renderHero(items);
+    renderRows(items);
+    renderTable(items);
+    renderUpdated();
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, (ch) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+  }
+
+  $("toggleTable").addEventListener("click", () => {
+    const panel = $("chartPanel");
+    panel.classList.toggle("show-table");
+    $("toggleTable").textContent = panel.classList.contains("show-table") ? "Ver gráfica" : "Ver tabla";
+  });
+
+  async function load() {
+    try {
+      const res = await fetch("/api/progress", { cache: "no-store" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const body = await res.json();
+      if (body.error) throw new Error(body.error);
+      data = body;
+      document.getElementById("app").classList.remove("demo");
+    } catch (_) {
+      if (!data) { data = DEMO; document.getElementById("app").classList.add("demo"); }
+    }
+    render();
+  }
+
+  load();
+  setInterval(load, 60000);
+})();
+</script>
+</body>
+</html>
