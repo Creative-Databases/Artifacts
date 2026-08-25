@@ -112,9 +112,12 @@
   .toggle-table:hover { color: var(--text-primary); }
 
   .rows { margin-top: 18px; display: grid; gap: 14px; }
-  .row { display: grid; grid-template-columns: minmax(140px, 220px) 1fr; gap: 12px; align-items: center; }
+  .row { display: grid; grid-template-columns: minmax(140px, 220px) 1fr 92px; gap: 12px; align-items: center; }
   .row .name { font-size: 13.5px; color: var(--text-primary); overflow-wrap: anywhere; }
   .row .name .cnt { color: var(--text-muted); font-size: 12px; }
+  .row.expandable .name { cursor: pointer; }
+  .row.expandable .name:hover { text-decoration: underline; text-decoration-color: var(--baseline); }
+  .chev { display: inline-block; width: 14px; color: var(--text-muted); font-size: 11px; }
   .track { position: relative; height: 22px; }
   .track .rail {
     position: absolute; inset: 8px 0; border-radius: 4px;
@@ -127,13 +130,24 @@
   .seg.done    { background: var(--done); }
   .seg.pending { background: var(--pending); }
   .val {
-    position: absolute; top: 1px; font-size: 12px; color: var(--text-secondary); white-space: nowrap;
+    font-size: 12px; color: var(--text-secondary); white-space: nowrap;
+    text-align: right; font-variant-numeric: tabular-nums;
   }
   .val strong { color: var(--text-primary); font-weight: 650; }
   .row.empty .track::after {
     content: "Sin estimación"; position: absolute; top: 2px; left: 0;
     font-size: 12px; color: var(--text-muted); font-style: italic;
   }
+  .task-row { display: grid; grid-template-columns: minmax(140px, 220px) 1fr 92px; gap: 12px; align-items: center; }
+  .task-row .tname { font-size: 12.5px; color: var(--text-secondary); overflow-wrap: anywhere; }
+  .task-row .tstatus { font-size: 12px; color: var(--text-muted); }
+  .task-row .dot {
+    display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+    margin-right: 7px; vertical-align: 0;
+  }
+  .task-row .dot.done    { background: var(--done); }
+  .task-row .dot.pending { background: var(--pending); }
+  .task-row .tval { font-size: 12px; color: var(--text-muted); text-align: right; font-variant-numeric: tabular-nums; }
 
   .tooltip {
     position: fixed; z-index: 10; pointer-events: none; display: none;
@@ -243,6 +257,7 @@
 
   let data = null;
   let selectedPortal = "__all__";
+  const expandedIds = new Set();
 
   const $ = (id) => document.getElementById(id);
   const fmt = (n) => (Math.round(n * 10) / 10).toLocaleString("es-MX");
@@ -295,14 +310,26 @@
 
     items.forEach(c => {
       const row = document.createElement("div");
-      row.className = "row" + (c.totalImpact === 0 ? " empty" : "");
+      const hasTasks = (c.tasks || []).length > 0;
+      row.className = "row" + (c.totalImpact === 0 ? " empty" : "") + (hasTasks ? " expandable" : "");
 
       const name = document.createElement("div");
       name.className = "name";
       const depth = c.depth || 0;
       if (depth > 0) name.style.paddingLeft = (depth * 18) + "px";
-      name.innerHTML = (depth > 0 ? '<span class="cnt">&#8627;</span> ' : "") + escapeHtml(c.name) +
+      const chev = hasTasks
+        ? '<span class="chev">' + (expandedIds.has(c.id) ? "&#9662;" : "&#9656;") + "</span>"
+        : '<span class="chev"></span>';
+      name.innerHTML = chev + (depth > 0 ? '<span class="cnt">&#8627;</span> ' : "") + escapeHtml(c.name) +
         (c.noImpactTasks ? ' <span class="cnt">(+' + c.noImpactTasks + " sin estimar)</span>" : "");
+      if (hasTasks) {
+        name.setAttribute("role", "button");
+        name.setAttribute("aria-expanded", String(expandedIds.has(c.id)));
+        name.addEventListener("click", () => {
+          if (expandedIds.has(c.id)) expandedIds.delete(c.id); else expandedIds.add(c.id);
+          renderRows(filtered());
+        });
+      }
       row.appendChild(name);
 
       const track = document.createElement("div");
@@ -334,15 +361,38 @@
           track.appendChild(seg);
           x += w;
         });
-        const val = document.createElement("span");
-        val.className = "val";
-        val.style.left = "calc(" + Math.min(x, 100) + "% + 8px)";
-        val.innerHTML = "<strong>" + fmt(c.doneImpact) + "</strong>/" + fmt(c.totalImpact) +
-          (c.pct != null ? " · " + c.pct + "%" : "");
-        track.appendChild(val);
       }
       row.appendChild(track);
+
+      const val = document.createElement("div");
+      val.className = "val";
+      if (c.totalImpact > 0) {
+        val.innerHTML = "<strong>" + fmt(c.doneImpact) + "</strong>/" + fmt(c.totalImpact) +
+          (c.pct != null ? " · " + c.pct + "%" : "");
+      }
+      row.appendChild(val);
       rows.appendChild(row);
+
+      if (hasTasks && expandedIds.has(c.id)) {
+        const sorted = [...c.tasks].sort((a, b) => (b.completed ? 1 : 0) - (a.completed ? 1 : 0));
+        sorted.forEach(t => {
+          const tr = document.createElement("div");
+          tr.className = "task-row";
+          const tn = document.createElement("div");
+          tn.className = "tname";
+          tn.style.paddingLeft = ((depth + 1) * 18 + 14) + "px";
+          tn.textContent = t.name;
+          const ts = document.createElement("div");
+          ts.className = "tstatus";
+          ts.innerHTML = '<span class="dot ' + (t.completed ? "done" : "pending") + '"></span>' +
+            escapeHtml(t.status || (t.completed ? "done" : "pendiente"));
+          const tv = document.createElement("div");
+          tv.className = "tval";
+          tv.textContent = t.impact != null ? fmt(t.impact) + " pts" : "–";
+          tr.append(tn, ts, tv);
+          rows.appendChild(tr);
+        });
+      }
     });
 
     $("emptyState").hidden = items.length > 0;
