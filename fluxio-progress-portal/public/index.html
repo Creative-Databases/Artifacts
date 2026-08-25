@@ -295,8 +295,11 @@
   }
 
   function segTooltip(c, kind) {
-    const list = c.tasks.filter(t => t.impact != null && t.completed === (kind === "done"));
     const pts = kind === "done" ? c.doneImpact : c.activeImpact;
+    if (c.selfImpact) {
+      return { title: c.name, sub: "Estimación del componente: " + fmt(pts) + " pts (" + (c.status || "") + ")" };
+    }
+    const list = c.tasks.filter(t => t.impact != null && t.completed === (kind === "done"));
     const names = list.slice(0, 6).map(t => t.name).join(", ") + (list.length > 6 ? "…" : "");
     return { title: c.name, sub: (kind === "done" ? "Completado: " : "Pendiente: ") + fmt(pts) +
       " pts · " + list.length + " tarea" + (list.length === 1 ? "" : "s") + (names ? " — " + names : "") };

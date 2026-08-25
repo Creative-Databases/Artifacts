@@ -125,6 +125,17 @@ export async function getProgress(env) {
       detail.push({ name: ch.name, impact, completed, status: ch.status && ch.status.status });
     }
 
+    // Componente hoja: sin tareas con Impact, su propio Impact cuenta como estimación
+    // (completado/pendiente según el status del componente). Si hay tareas con Impact, ellas mandan.
+    let selfImpact = false;
+    if (doneImpact + activeImpact === 0) {
+      const own = numberValue(c, IMPACT_FIELD_ID);
+      if (own != null) {
+        selfImpact = true;
+        if (isCompleted(c)) doneImpact = own; else activeImpact = own;
+      }
+    }
+
     const total = doneImpact + activeImpact;
     const parentComp = parentComponentOf(c);
     return {
@@ -136,6 +147,7 @@ export async function getProgress(env) {
       portal,
       parentComponentId: parentComp ? parentComp.id : null,
       depth: 0,
+      selfImpact,
       doneImpact,
       activeImpact,
       totalImpact: total,

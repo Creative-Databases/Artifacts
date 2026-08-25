@@ -22,6 +22,11 @@ El cliente solo abre una URL — no necesita cuenta de ClickUp.
 Las subtareas **sin** valor en `Impact` no suman a la barra; se muestran como
 "(+N sin estimar)" junto al nombre del componente.
 
+**Componente hoja con Impact propio**: si un componente no tiene tareas con Impact,
+su propio campo `Impact` cuenta como su estimación (completado o pendiente según el
+status del componente). En cuanto tenga tareas con Impact, ellas mandan y el propio
+se ignora — nunca se suman ambos.
+
 **Componentes anidados** (un Componente como subtarea de otro Componente):
 - Cada componente tiene su propia barra; los anidados se muestran indentados (↳)
   debajo de su componente padre.
