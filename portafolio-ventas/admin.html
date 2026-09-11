@@ -94,6 +94,7 @@
   .pe-open .material-symbols-outlined{font-size:20px; color:var(--accent)}
   .pe-open .chev{margin-left:auto; color:var(--ink-soft)}
   .pe-note{font-size:.8rem; color:var(--ink-soft); margin:0 0 1rem; line-height:1.45}
+  .pe-sub{font-family:var(--font-mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--ink-soft); margin:1.3rem 0 .1rem}
   .pe-row{display:flex; align-items:center; gap:.8rem; padding:.6rem 0; border-bottom:1px solid var(--line)}
   .pe-row:first-of-type{border-top:1px solid var(--line)}
   .pe-lb{flex:1; font-size:.9rem; font-weight:600; color:var(--ink)}
@@ -412,7 +413,7 @@
     <p class="lead">Más de una década en el ecosistema Claris / FileMaker y en web moderno. Seis líneas de servicio, un mismo equipo.</p>
     <div class="home-grid">
       <a class="home-card" style="--hc:var(--accent)" href="#od-catalogo"><div class="hi"><span class="material-symbols-outlined">handshake</span></div><h3>Servicios on demand</h3><p>Cuando necesitas criterio o un diagnóstico, sin un proyecto largo de por medio.</p><ul class="feat"><li><span class="material-symbols-outlined">check</span>Consultoría</li><li><span class="material-symbols-outlined">check</span>Arquitectura digital</li><li><span class="material-symbols-outlined">check</span>Auditorías y mantenimientos</li><li><span class="material-symbols-outlined">check</span>Integraciones y automatizaciones</li><li class="more"><span class="material-symbols-outlined">more_horiz</span>Mucho más…</li></ul><div class="foot"><div class="price q">Por sesión o por horas</div><span class="cta">Ver servicios →</span></div></a>
-      <a class="home-card feature" style="--hc:var(--blue)" href="#dc-plan"><div class="hi"><span class="material-symbols-outlined">autorenew</span></div><h3>Desarrollo continuo</h3><p>Un equipo que evoluciona tu sistema, mes a mes.</p><ul class="feat"><li><span class="material-symbols-outlined">check</span>Project Manager asignado</li><li><span class="material-symbols-outlined">check</span>Pool de horas mensuales</li><li><span class="material-symbols-outlined">check</span>Wiki, tickets y backlog en vivo</li><li><span class="material-symbols-outlined">check</span>Reporte de ciclo mensual</li><li><span class="material-symbols-outlined">check</span>Actualizaciones de UI/UX</li></ul><div class="foot"><div class="price" data-price="continuoHora" data-mult="30" data-prefix="Desde " data-unit="/ mes"></div><span class="cta">Ver el plan →</span></div></a>
+      <a class="home-card feature" style="--hc:var(--blue)" href="#dc-plan"><div class="hi"><span class="material-symbols-outlined">autorenew</span></div><h3>Desarrollo continuo</h3><p>Un equipo que evoluciona tu sistema, mes a mes.</p><ul class="feat"><li><span class="material-symbols-outlined">check</span>Project Manager asignado</li><li><span class="material-symbols-outlined">check</span>Pool de horas mensuales</li><li><span class="material-symbols-outlined">check</span>Wiki, tickets y backlog en vivo</li><li><span class="material-symbols-outlined">check</span>Reporte de ciclo mensual</li><li><span class="material-symbols-outlined">check</span>Actualizaciones de UI/UX</li></ul><div class="foot"><div class="price" data-price="continuoHora" data-multkey="minHoras" data-prefix="Desde " data-unit="/ mes"></div><span class="cta">Ver el plan →</span></div></a>
       <a class="home-card" style="--hc:var(--purple)" href="#hosting-planes"><div class="hi"><span class="material-symbols-outlined">dns</span></div><h3>Administración de FM Server</h3><p>Tu FileMaker Server, alojado y cuidado por nosotros.</p><ul class="feat"><li><span class="material-symbols-outlined">check</span>Servidor administrado y monitoreado</li><li><span class="material-symbols-outlined">check</span>Actualizaciones y parches al día</li><li><span class="material-symbols-outlined">check</span>Certificado SSL y seguridad de acceso</li><li><span class="material-symbols-outlined">check</span>Respaldos programados</li><li><span class="material-symbols-outlined">check</span>Respaldo externo y servidor en espera</li></ul><div class="foot"><div class="price q">Cotización a tu medida</div><span class="cta">Ver hosting →</span></div></a>
     </div>
 
@@ -747,21 +748,21 @@
         <div class="qh">Cotiza tu plan</div>
         <div class="q-hero"><span id="q-h">30</span><span class="hu">horas / mes</span></div>
         <input type="range" id="q-hours" min="30" max="160" step="10" value="30" aria-label="Horas al mes">
-        <div class="q-scale"><span>30 h</span><span>160 h</span></div>
+        <div class="q-scale"><span id="q-min-label">30 h</span><span>160 h</span></div>
         <div class="q-presets">
           <button class="q-preset on" type="button" data-h="30">30 h</button>
-          <button class="q-preset" type="button" data-h="50">50 h<span class="pd">&#8722;10%</span></button>
-          <button class="q-preset" type="button" data-h="80">80 h<span class="pd">&#8722;20%</span></button>
-          <button class="q-preset" type="button" data-h="120">120 h<span class="pd">&#8722;20%</span></button>
+          <button class="q-preset" type="button" data-h="50">50 h<span class="pd" data-pct="1"></span></button>
+          <button class="q-preset" type="button" data-h="80">80 h<span class="pd" data-pct="2"></span></button>
+          <button class="q-preset" type="button" data-h="120">120 h<span class="pd" data-pct="2"></span></button>
         </div>
         <div class="q-total">
           <div class="q-rate"><span class="l">Tu hora</span><span class="v" id="q-r"></span><span class="q-badge" id="q-badge"></span></div>
           <div class="q-sum"><span id="q-hh">30</span> h &times; <span id="q-rr"></span> = <span id="q-p"></span> <span id="q-unit">MXN/mes</span></div>
-          <div class="q-tiers">La hora baja a <strong><span data-price="continuoHora" data-mult="0.9" data-inline></span> desde 50 h</strong> y a <strong><span data-price="continuoHora" data-mult="0.8" data-inline></span> desde 80 h</strong>.</div>
+          <div class="q-tiers">La hora baja a <strong><span data-price="continuoHora" data-disc="1" data-inline></span> desde 50 h</strong> y a <strong><span data-price="continuoHora" data-disc="2" data-inline></span> desde 80 h</strong>.</div>
           <div class="q-iva">Precios sin IVA</div>
         </div>
       </div>
-    <p class="note">Precios sin IVA. Mínimo 30 horas al mes. Descuento por volumen: <span data-price="continuoHora" data-mult="0.9" data-inline></span>/h desde 50 h, <span data-price="continuoHora" data-mult="0.8" data-inline></span>/h desde 80 h. Las horas no consumidas no se acumulan y puedes ajustar tu volumen con aviso previo. Los bugs atribuibles a nuestro código no consumen tus horas.</p>
+    <p class="note">Precios sin IVA. Mínimo <span data-minhoras>30</span> horas al mes. Descuento por volumen: <span data-price="continuoHora" data-disc="1" data-inline></span>/h desde 50 h, <span data-price="continuoHora" data-disc="2" data-inline></span>/h desde 80 h. Las horas no consumidas no se acumulan y puedes ajustar tu volumen con aviso previo. Los bugs atribuibles a nuestro código no consumen tus horas.</p>
   </section>
 
   <!-- DC Wiki -->
@@ -1054,7 +1055,11 @@
       <div class="pe-row"><span class="pe-lb">Auditoría de sistema FileMaker <em>MXN &middot; fijo</em></span><div class="pe-f"><span>$</span><input class="pe-input" data-key="audSistema" type="number" min="0" step="500" value="18000"></div></div>
       <div class="pe-row"><span class="pe-lb">Auditoría de FileMaker Server <em>MXN &middot; fijo</em></span><div class="pe-f"><span>$</span><input class="pe-input" data-key="audServidor" type="number" min="0" step="500" value="9000"></div></div>
       <div class="pe-row"><span class="pe-lb">Instalación de FM Server <em>MXN &middot; desde</em></span><div class="pe-f"><span>$</span><input class="pe-input" data-key="instalacion" type="number" min="0" step="500" value="6000"></div></div>
-      <p class="pe-foot">La hora de desarrollo continuo define el cotizador (&minus;10% desde 50 h, &minus;20% desde 80 h) y el &ldquo;Desde&rdquo; del plan.</p>
+      <div class="pe-sub">Cotizador &middot; plan continuo</div>
+      <div class="pe-row"><span class="pe-lb">Mínimo de horas <em>por mes</em></span><div class="pe-f"><input class="pe-min" data-key="minHoras" type="number" min="1" step="5" value="30"><span>h</span></div></div>
+      <div class="pe-row"><span class="pe-lb">Desde 50 h <em>descuento</em></span><div class="pe-f"><span>&minus;</span><input class="pe-disc" data-key="disc1" type="number" min="0" max="90" step="1" value="10"><span>%</span></div></div>
+      <div class="pe-row"><span class="pe-lb">Desde 80 h <em>descuento</em></span><div class="pe-f"><span>&minus;</span><input class="pe-disc" data-key="disc2" type="number" min="0" max="90" step="1" value="20"><span>%</span></div></div>
+      <p class="pe-foot">La hora de desarrollo continuo define el cotizador (<span data-pct="1"></span> desde 50 h, <span data-pct="2"></span> desde 80 h) y el &ldquo;Desde&rdquo; del plan.</p>
     </div>
   </div>
 </div>
@@ -1132,11 +1137,11 @@
         rEl=document.getElementById('q-r'), rr=document.getElementById('q-rr'),
         p=document.getElementById('q-p'), badge=document.getElementById('q-badge');
     var presets=[].slice.call(document.querySelectorAll('.q-preset'));
-    function rate(v){ var b=(window.PRICES?window.PRICES.continuoHora:800); return v<50?b:(v<80?Math.round(b*0.9):Math.round(b*0.8)); }
-    function disc(v){ return v<50?0:(v<80?10:20); }
+    function rate(v){ var P=window.PRICES||{}; var b=(P.continuoHora!=null?P.continuoHora:800); return Math.round(b*(1-disc(v)/100)); }
+    function disc(v){ var P=window.PRICES||{}; return v<50?0:(v<80?(P.disc1!=null?P.disc1:10):(P.disc2!=null?P.disc2:20)); }
     var unitEl=document.getElementById('q-unit');
     function money(mxn){ return (window.CUR&&window.CUR.fmt)?window.CUR.fmt(mxn):('$'+Math.round(mxn).toLocaleString('es-MX')); }
-    function upd(v){ v=Math.max(30,parseInt(v,10)||30); var rt=rate(v), d=disc(v);
+    function upd(v){ var mh=(window.PRICES&&window.PRICES.minHoras!=null?window.PRICES.minHoras:30); v=Math.max(mh,parseInt(v,10)||mh); var rt=rate(v), d=disc(v);
       hEl.textContent=v; hh.textContent=v; rEl.innerHTML=money(rt); rr.innerHTML=money(rt);
       p.innerHTML=money(v*rt);
       if(unitEl) unitEl.textContent=(window.CUR?window.CUR.cur:'MXN')+'/mes';
@@ -1150,7 +1155,7 @@
   })();
   // control de precios + moneda + modal de configuración
   (function(){
-    window.PRICES={ consultoria:900, arquitectura:12000, continuoHora:800, audSistema:18000, audServidor:9000, instalacion:6000 };
+    window.PRICES={ consultoria:900, arquitectura:12000, continuoHora:800, audSistema:18000, audServidor:9000, instalacion:6000, disc1:10, disc2:20, minHoras:30 };
     var state={cur:'MXN', rate:18};
     function fmt(mxn){
       var v = state.cur==='USD' ? (mxn/state.rate) : mxn;
@@ -1159,7 +1164,7 @@
     }
     window.CUR={ get cur(){return state.cur;}, get rate(){return state.rate;}, fmt:fmt };
     function baseOf(el){
-      if(el.hasAttribute('data-price')){ var p=window.PRICES[el.getAttribute('data-price')]||0; var m=parseFloat(el.getAttribute('data-mult'))||1; return p*m; }
+      if(el.hasAttribute('data-price')){ var p=window.PRICES[el.getAttribute('data-price')]||0; if(el.hasAttribute('data-disc')){ var dn=el.getAttribute('data-disc'); var d=window.PRICES['disc'+dn]; return p*(1-((d!=null?d:0)/100)); } var m; if(el.hasAttribute('data-multkey')){ var mk=window.PRICES[el.getAttribute('data-multkey')]; m=(mk!=null?mk:1); } else { m=parseFloat(el.getAttribute('data-mult'))||1; } return p*m; }
       return +el.getAttribute('data-mxn')||0;
     }
     window.applyPrices=function(){
@@ -1170,6 +1175,8 @@
         var unit=el.getAttribute('data-unit')||'';
         el.innerHTML=prefix+fmt(val)+' <span class="pu">'+state.cur+(unit?(' '+unit):'')+' &middot; sin IVA</span>';
       });
+      [].slice.call(document.querySelectorAll('[data-pct]')).forEach(function(el){ var dn=el.getAttribute('data-pct'); var d=window.PRICES['disc'+dn]; el.textContent='\u2212'+(d!=null?d:0)+'%'; });
+      (function(){ var mh=(window.PRICES&&window.PRICES.minHoras!=null)?window.PRICES.minHoras:30; var sl=document.getElementById('q-hours'); if(sl){ sl.min=mh; if((+sl.value)<mh) sl.value=mh; } var ml=document.getElementById('q-min-label'); if(ml) ml.textContent=mh+' h'; [].slice.call(document.querySelectorAll('[data-minhoras]')).forEach(function(e){ e.textContent=mh; }); })();
       if(window.quoterRefresh) window.quoterRefresh();
     };
     // moneda
@@ -1183,6 +1190,9 @@
     if(ri) ri.addEventListener('input',function(){ var rr=parseFloat(ri.value); if(rr>0){ state.rate=rr; window.applyPrices(); } });
     // editor de precios
     [].slice.call(document.querySelectorAll('.pe-input')).forEach(function(inp){
+      inp.addEventListener('input',function(){ var k=inp.getAttribute('data-key'); var v=parseFloat(inp.value); if(v>=0){ window.PRICES[k]=v; window.applyPrices(); } });
+    });
+    [].slice.call(document.querySelectorAll('.pe-disc,.pe-min')).forEach(function(inp){
       inp.addEventListener('input',function(){ var k=inp.getAttribute('data-key'); var v=parseFloat(inp.value); if(v>=0){ window.PRICES[k]=v; window.applyPrices(); } });
     });
     // modal (dos vistas)
