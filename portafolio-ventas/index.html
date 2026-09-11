@@ -95,6 +95,8 @@
   .pe-open .chev{margin-left:auto; color:var(--ink-soft)}
   .pe-note{font-size:.8rem; color:var(--ink-soft); margin:0 0 1rem; line-height:1.45}
   .pe-sub{font-family:var(--font-mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--ink-soft); margin:1.3rem 0 .1rem}
+  .pe-lb .pe-thr{width:50px; font:inherit; font-family:var(--font-mono); font-size:.85rem; font-weight:700; color:var(--ink); border:1px solid var(--line-2); border-radius:6px; padding:.12rem .3rem; background:var(--card); text-align:center; margin:0 .1rem; vertical-align:baseline}
+  .pe-lb .pe-thr:focus-visible{outline:2px solid var(--accent); outline-offset:1px}
   .pe-row{display:flex; align-items:center; gap:.8rem; padding:.6rem 0; border-bottom:1px solid var(--line)}
   .pe-row:first-of-type{border-top:1px solid var(--line)}
   .pe-lb{flex:1; font-size:.9rem; font-weight:600; color:var(--ink)}
@@ -748,7 +750,7 @@
         <div class="qh">Cotiza tu plan</div>
         <div class="q-hero"><span id="q-h">30</span><span class="hu">horas / mes</span></div>
         <input type="range" id="q-hours" min="30" max="160" step="10" value="30" aria-label="Horas al mes">
-        <div class="q-scale"><span id="q-min-label">30 h</span><span>160 h</span></div>
+        <div class="q-scale"><span id="q-min-label">30 h</span><span id="q-max-label">160 h</span></div>
         <div class="q-presets">
           <button class="q-preset on" type="button" data-h="30">30 h</button>
           <button class="q-preset" type="button" data-h="50">50 h<span class="pd" data-pct="1"></span></button>
@@ -758,11 +760,11 @@
         <div class="q-total">
           <div class="q-rate"><span class="l">Tu hora</span><span class="v" id="q-r"></span><span class="q-badge" id="q-badge"></span></div>
           <div class="q-sum"><span id="q-hh">30</span> h &times; <span id="q-rr"></span> = <span id="q-p"></span> <span id="q-unit">MXN/mes</span></div>
-          <div class="q-tiers">La hora baja a <strong><span data-price="continuoHora" data-disc="1" data-inline></span> desde 50 h</strong> y a <strong><span data-price="continuoHora" data-disc="2" data-inline></span> desde 80 h</strong>.</div>
+          <div class="q-tiers">La hora baja a <strong><span data-price="continuoHora" data-disc="1" data-inline></span> desde <span data-thr="1">50</span> h</strong> y a <strong><span data-price="continuoHora" data-disc="2" data-inline></span> desde <span data-thr="2">80</span> h</strong>.</div>
           <div class="q-iva">Precios sin IVA</div>
         </div>
       </div>
-    <p class="note">Precios sin IVA. Mínimo <span data-minhoras>30</span> horas al mes. Descuento por volumen: <span data-price="continuoHora" data-disc="1" data-inline></span>/h desde 50 h, <span data-price="continuoHora" data-disc="2" data-inline></span>/h desde 80 h. Las horas no consumidas no se acumulan y puedes ajustar tu volumen con aviso previo. Los bugs atribuibles a nuestro código no consumen tus horas.</p>
+    <p class="note">Precios sin IVA. Mínimo <span data-minhoras>30</span> horas al mes. Descuento por volumen: <span data-price="continuoHora" data-disc="1" data-inline></span>/h desde <span data-thr="1">50</span> h, <span data-price="continuoHora" data-disc="2" data-inline></span>/h desde <span data-thr="2">80</span> h. Las horas no consumidas no se acumulan y puedes ajustar tu volumen con aviso previo. Los bugs atribuibles a nuestro código no consumen tus horas.</p>
   </section>
 
   <!-- DC Wiki -->
@@ -1102,7 +1104,7 @@
         p=document.getElementById('q-p'), badge=document.getElementById('q-badge');
     var presets=[].slice.call(document.querySelectorAll('.q-preset'));
     function rate(v){ var P=window.PRICES||{}; var b=(P.continuoHora!=null?P.continuoHora:800); return Math.round(b*(1-disc(v)/100)); }
-    function disc(v){ var P=window.PRICES||{}; return v<50?0:(v<80?(P.disc1!=null?P.disc1:10):(P.disc2!=null?P.disc2:20)); }
+    function disc(v){ var P=window.PRICES||{}; var t1=(P.thr1!=null?P.thr1:50), t2=(P.thr2!=null?P.thr2:80); return v<t1?0:(v<t2?(P.disc1!=null?P.disc1:10):(P.disc2!=null?P.disc2:20)); }
     var unitEl=document.getElementById('q-unit');
     function money(mxn){ return (window.CUR&&window.CUR.fmt)?window.CUR.fmt(mxn):('$'+Math.round(mxn).toLocaleString('es-MX')); }
     function upd(v){ var mh=(window.PRICES&&window.PRICES.minHoras!=null?window.PRICES.minHoras:30); v=Math.max(mh,parseInt(v,10)||mh); var rt=rate(v), d=disc(v);
@@ -1119,7 +1121,7 @@
   })();
   // control de precios + moneda + modal de configuración
   (function(){
-    window.PRICES={ consultoria:900, arquitectura:12000, continuoHora:800, audSistema:18000, audServidor:9000, instalacion:6000, disc1:10, disc2:20, minHoras:30 };
+    window.PRICES={ consultoria:900, arquitectura:12000, continuoHora:800, audSistema:18000, audServidor:9000, instalacion:6000, disc1:10, disc2:20, minHoras:30, thr1:50, thr2:80 };
     var state={cur:'MXN', rate:18};
     function fmt(mxn){
       var v = state.cur==='USD' ? (mxn/state.rate) : mxn;
@@ -1141,6 +1143,13 @@
       });
       [].slice.call(document.querySelectorAll('[data-pct]')).forEach(function(el){ var dn=el.getAttribute('data-pct'); var d=window.PRICES['disc'+dn]; el.textContent='\u2212'+(d!=null?d:0)+'%'; });
       (function(){ var mh=(window.PRICES&&window.PRICES.minHoras!=null)?window.PRICES.minHoras:30; var sl=document.getElementById('q-hours'); if(sl){ sl.min=mh; if((+sl.value)<mh) sl.value=mh; } var ml=document.getElementById('q-min-label'); if(ml) ml.textContent=mh+' h'; [].slice.call(document.querySelectorAll('[data-minhoras]')).forEach(function(e){ e.textContent=mh; }); })();
+      (function(){ var P=window.PRICES||{}; var mh=(P.minHoras!=null?P.minHoras:30), t1=(P.thr1!=null?P.thr1:50), t2=(P.thr2!=null?P.thr2:80), d1=(P.disc1!=null?P.disc1:10), d2=(P.disc2!=null?P.disc2:20);
+        [].slice.call(document.querySelectorAll('[data-thr]')).forEach(function(e){ e.textContent=(e.getAttribute('data-thr')==='1'?t1:t2); });
+        var p4=Math.round(t2*1.5); var top=Math.max(160, p4); var sl=document.getElementById('q-hours'); if(sl){ sl.max=top; } var xl=document.getElementById('q-max-label'); if(xl) xl.textContent=top+' h';
+        function discAt(v){ return v<t1?0:(v<t2?d1:d2); }
+        var vals=[mh,t1,t2,p4];
+        [].slice.call(document.querySelectorAll('.q-preset')).forEach(function(b,i){ if(i>=vals.length) return; var v=vals[i]; b.setAttribute('data-h',v); var d=discAt(v); b.innerHTML=v+' h'+(d?' <span class="pd">\u2212'+d+'%</span>':''); });
+      })();
       if(window.quoterRefresh) window.quoterRefresh();
     };
     // moneda
@@ -1156,7 +1165,7 @@
     [].slice.call(document.querySelectorAll('.pe-input')).forEach(function(inp){
       inp.addEventListener('input',function(){ var k=inp.getAttribute('data-key'); var v=parseFloat(inp.value); if(v>=0){ window.PRICES[k]=v; window.applyPrices(); } });
     });
-    [].slice.call(document.querySelectorAll('.pe-disc,.pe-min')).forEach(function(inp){
+    [].slice.call(document.querySelectorAll('.pe-disc,.pe-min,.pe-thr')).forEach(function(inp){
       inp.addEventListener('input',function(){ var k=inp.getAttribute('data-key'); var v=parseFloat(inp.value); if(v>=0){ window.PRICES[k]=v; window.applyPrices(); } });
     });
     // modal (dos vistas)
